@@ -16,21 +16,40 @@ public class BookingRequestBuilder {
     /**
      * Returns a valid booking with sensible defaults.
      */
-    public static BookingRequest validBooking() {
-        int[] availableRooms = {1, 2, 3, 4, 5};
-        int randomRoom = availableRooms[new Random()
-                .nextInt(availableRooms.length)];
+    private static int getUniqueOffset() {
+        return (int)(System.currentTimeMillis() % 200) + 100;
+    }
 
+        // Use timestamp to make dates unique every run!
+        long uniqueOffset = (System.currentTimeMillis() % 100) + 90;
+
+    public static BookingRequest validBooking() {
+        int offset = getUniqueOffset();
         return BookingRequest.builder()
-                .roomid(randomRoom)
+                .roomid(1)
                 .firstname("John")
                 .lastname("Doe")
                 .depositpaid(true)
                 .bookingdates(BookingDates.builder()
-                        .checkin(DateUtils.futureDate(60))
-                        .checkout(DateUtils.futureDate(63))
+                        .checkin(DateUtils.futureDate(offset))
+                        .checkout(DateUtils.futureDate(offset + 3))
                         .build())
                 .email("john.doe+" + System.currentTimeMillis() + "@example.com")
+                .phone("12345617890")
+                .build();
+    }
+
+    public static BookingRequest updatedBooking(String checkin, String checkout) {
+        return BookingRequest.builder()
+                .roomid(1)
+                .firstname("UpdatedName")
+                .lastname("UpdatedLastname")
+                .depositpaid(false)
+                .bookingdates(BookingDates.builder()
+                        .checkin(checkin)
+                        .checkout(checkout)
+                        .build())
+                .email("updated+" + System.currentTimeMillis() + "@example.com")
                 .phone("12345617890")
                 .build();
     }

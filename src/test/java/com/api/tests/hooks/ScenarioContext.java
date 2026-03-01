@@ -10,6 +10,8 @@ public class ScenarioContext {
     private Response lastResponse;
     private Integer lastCreatedBookingId;
     private String authToken;
+    private String lastCheckinDate;
+    private String lastCheckoutDate;
 
     private ScenarioContext() {}
 
@@ -35,4 +37,10 @@ public class ScenarioContext {
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
+
+    public String getLastCheckinDate() { return lastCheckinDate; }
+    public void setLastCheckinDate(String date) { this.lastCheckinDate = date; }
+
+    public String getLastCheckoutDate() { return lastCheckoutDate; }
+    public void setLastCheckoutDate(String date) { this.lastCheckoutDate = date; }
 }

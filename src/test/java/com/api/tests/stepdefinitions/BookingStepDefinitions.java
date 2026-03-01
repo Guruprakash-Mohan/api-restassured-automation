@@ -132,9 +132,9 @@ public class BookingStepDefinitions {
                 ScenarioContext.get().getLastResponse(), field, value);
     }
 
-    @When("I create a booking with firstname {string}")
-    public void iCreateABookingWithFirstname(String firstname) {
-        BookingRequest request = BookingRequestBuilder.invalidFirstnameBooking(firstname);
+    @When("I create a booking with firstname {string} and lastname {string}")
+    public void iCreateABookingWithFirstname(String firstname, String lastname) {
+        BookingRequest request = BookingRequestBuilder.invalidFirstAndLastnameBooking(firstname, lastname);
         Response response = bookingClient.createBooking(request);
         ScenarioContext.get().setLastResponse(response);
     }
@@ -143,5 +143,26 @@ public class BookingStepDefinitions {
     public void theResponseShouldContainErrorMessage() {
         ResponseValidator.assertBodyFieldNotNull(
                 ScenarioContext.get().getLastResponse(), "errors");
+    }
+
+    @When("I create a booking with checkin {string} and checkout {string}")
+    public void iCreateABookingWithCheckinAndCheckout(String checkin, String checkout) {
+        BookingRequest request = BookingRequestBuilder.invalidDatesBooking(checkin, checkout);
+        Response response = bookingClient.createBooking(request);
+        ScenarioContext.get().setLastResponse(response);
+    }
+
+    @When("I create a booking with an invalid email {string}")
+    public void iCreateABookingWithInvalidEmail(String email) {
+        BookingRequest request = BookingRequestBuilder.invalidEmail(email);
+        Response response = bookingClient.createBooking(request);
+        ScenarioContext.get().setLastResponse(response);
+    }
+
+    @When("I create a booking with a phone number that is too short {string}")
+    public void iCreateABookingWithInvalidPhonenumber(String phonenumber) {
+        BookingRequest request = BookingRequestBuilder.invalidPhonenumber(phonenumber);
+        Response response = bookingClient.createBooking(request);
+        ScenarioContext.get().setLastResponse(response);
     }
 }

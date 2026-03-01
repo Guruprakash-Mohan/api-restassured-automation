@@ -17,43 +17,20 @@ public class BookingRequestBuilder {
      * Returns a valid booking with sensible defaults.
      */
     private static int getUniqueOffset() {
-        return (int)(System.currentTimeMillis() % 200) + 100;
+        // 700-900 days ahead = safely in 2028!
+        return (int)(System.currentTimeMillis() % 200) + 700;
     }
-
-   /*     // Use timestamp to make dates unique every run!
-        long uniqueOffset = (System.currentTimeMillis() % 100) + 90;
 
     public static BookingRequest validBooking() {
         int offset = getUniqueOffset();
         return BookingRequest.builder()
-                .roomid(1)
+                .roomid(new Random().nextInt(900) + 100)
                 .firstname("John")
                 .lastname("Doe")
                 .depositpaid(true)
                 .bookingdates(BookingDates.builder()
                         .checkin(DateUtils.futureDate(offset))
                         .checkout(DateUtils.futureDate(offset + 3))
-                        .build())
-                .email("john.doe+" + System.currentTimeMillis() + "@example.com")
-                .phone("12345617890")
-                .build();
-    }*/
-
-    public static BookingRequest validBooking() {
-        // Use wider room range - API supports up to 100+
-        int randomRoom = new Random().nextInt(100) + 1;
-
-        // Larger range = less chance of conflict!
-        long uniqueOffset = (System.currentTimeMillis() % 200) + 200;
-
-        return BookingRequest.builder()
-                .roomid(randomRoom)
-                .firstname("John")
-                .lastname("Doe")
-                .depositpaid(true)
-                .bookingdates(BookingDates.builder()
-                        .checkin(DateUtils.futureDate((int) uniqueOffset))
-                        .checkout(DateUtils.futureDate((int) uniqueOffset + 3))
                         .build())
                 .email("john.doe+" + System.currentTimeMillis() + "@example.com")
                 .phone("12345617890")
@@ -71,6 +48,22 @@ public class BookingRequestBuilder {
                         .checkout(checkout)
                         .build())
                 .email("updated+" + System.currentTimeMillis() + "@example.com")
+                .phone("12345617890")
+                .build();
+    }
+
+    public static BookingRequest invalidFirstnameBooking(String firstname) {
+        int offset = (int)(System.currentTimeMillis() % 200) + 200;
+        return BookingRequest.builder()
+                .roomid(new Random().nextInt(100) + 1)
+                .firstname(firstname)
+                .lastname("Doe")
+                .depositpaid(true)
+                .bookingdates(BookingDates.builder()
+                        .checkin(DateUtils.futureDate(offset))
+                        .checkout(DateUtils.futureDate(offset + 3))
+                        .build())
+                .email("test+" + System.currentTimeMillis() + "@example.com")
                 .phone("12345617890")
                 .build();
     }

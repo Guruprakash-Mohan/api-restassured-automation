@@ -22,7 +22,7 @@ public class BookingStepDefinitions {
     @When("I create a booking with valid details")
     public void iCreateABookingWithValidDetails() {
         Response response = null;
-        for (int attempt = 1; attempt <= 5; attempt++) {
+        for (int attempt = 1; attempt <= 10; attempt++) {
             BookingRequest request = BookingRequestBuilder.validBooking();
             response = bookingClient.createBooking(request);
             if (response.statusCode() == 201) {
@@ -39,7 +39,7 @@ public class BookingStepDefinitions {
     public void aValidBookingExists() {
         Response response = null;
         BookingRequest request = null;
-        for (int attempt = 1; attempt <= 5; attempt++) {
+        for (int attempt = 1; attempt <= 10; attempt++) {
             request = BookingRequestBuilder.validBooking();
             response = bookingClient.createBooking(request);
             if (response.statusCode() == 201) break;
@@ -130,5 +130,18 @@ public class BookingStepDefinitions {
     public void theResponseShouldContainFieldWithValue(String field, String value) {
         ResponseValidator.assertBodyContains(
                 ScenarioContext.get().getLastResponse(), field, value);
+    }
+
+    @When("I create a booking with firstname {string}")
+    public void iCreateABookingWithFirstname(String firstname) {
+        BookingRequest request = BookingRequestBuilder.invalidFirstnameBooking(firstname);
+        Response response = bookingClient.createBooking(request);
+        ScenarioContext.get().setLastResponse(response);
+    }
+
+    @Then("the response should contain error message")
+    public void theResponseShouldContainErrorMessage() {
+        ResponseValidator.assertBodyFieldNotNull(
+                ScenarioContext.get().getLastResponse(), "errors");
     }
 }

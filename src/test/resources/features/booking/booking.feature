@@ -46,3 +46,17 @@ Feature: Booking API
     Given a valid booking exists
     When I retrieve the booking without a token
     Then the response status should be 401
+
+  @security
+  Scenario: Delete a booking without authentication
+    Given a valid booking exists
+    When I delete the booking without a token
+    Then the response status should be 401
+
+  # ─── Negative Tests ──────────────────────────────────────────────────────────
+
+  @negative
+  Scenario: Create a booking with short firstname
+    When I create a booking with firstname "Jo"
+    Then the response status should be 400
+    And the response should contain error message

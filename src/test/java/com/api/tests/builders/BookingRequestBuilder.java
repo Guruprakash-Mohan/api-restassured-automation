@@ -20,7 +20,7 @@ public class BookingRequestBuilder {
         return (int)(System.currentTimeMillis() % 200) + 100;
     }
 
-        // Use timestamp to make dates unique every run!
+   /*     // Use timestamp to make dates unique every run!
         long uniqueOffset = (System.currentTimeMillis() % 100) + 90;
 
     public static BookingRequest validBooking() {
@@ -33,6 +33,27 @@ public class BookingRequestBuilder {
                 .bookingdates(BookingDates.builder()
                         .checkin(DateUtils.futureDate(offset))
                         .checkout(DateUtils.futureDate(offset + 3))
+                        .build())
+                .email("john.doe+" + System.currentTimeMillis() + "@example.com")
+                .phone("12345617890")
+                .build();
+    }*/
+
+    public static BookingRequest validBooking() {
+        // Use wider room range - API supports up to 100+
+        int randomRoom = new Random().nextInt(100) + 1;
+
+        // Larger range = less chance of conflict!
+        long uniqueOffset = (System.currentTimeMillis() % 200) + 200;
+
+        return BookingRequest.builder()
+                .roomid(randomRoom)
+                .firstname("John")
+                .lastname("Doe")
+                .depositpaid(true)
+                .bookingdates(BookingDates.builder()
+                        .checkin(DateUtils.futureDate((int) uniqueOffset))
+                        .checkout(DateUtils.futureDate((int) uniqueOffset + 3))
                         .build())
                 .email("john.doe+" + System.currentTimeMillis() + "@example.com")
                 .phone("12345617890")

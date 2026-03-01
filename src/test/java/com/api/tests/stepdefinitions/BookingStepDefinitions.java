@@ -5,24 +5,53 @@ import com.api.tests.builders.BookingRequestBuilder;
 import com.api.tests.clients.BookingClient;
 import com.api.tests.hooks.ScenarioContext;
 import com.api.tests.models.request.BookingRequest;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.java.en.Given;
 import io.restassured.response.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BookingStepDefinitions {
+
+    private static final Logger log =
+            LoggerFactory.getLogger(BookingStepDefinitions.class);
 
     private final BookingClient bookingClient = new BookingClient();
 
     @When("I create a booking with valid details")
     public void iCreateABookingWithValidDetails() {
-        BookingRequest request = BookingRequestBuilder.validBooking();
-        Response response = bookingClient.createBooking(request);
-        ScenarioContext.get().setLastResponse(response);
-        if (response.statusCode() == 201) {
-            int bookingId = response.jsonPath().getInt("bookingid");
-            ScenarioContext.get().setLastCreatedBookingId(bookingId);
+        Response response = null;
+        for (int attempt = 1; attempt <= 5; attempt++) {
+            BookingRequest request = BookingRequestBuilder.validBooking();
+            response = bookingClient.createBooking(request);
+            if (response.statusCode() == 201) {
+                ScenarioContext.get().setLastCreatedBookingId(
+                        response.jsonPath().getInt("bookingid"));
+                break;
+            }
+            log.warn("Attempt {} failed 409, retrying...", attempt);
         }
+        ScenarioContext.get().setLastResponse(response);
+    }
+
+    @Given("a valid booking exists")
+    public void aValidBookingExists() {
+        Response response = null;
+        BookingRequest request = null;
+        for (int attempt = 1; attempt <= 5; attempt++) {
+            request = BookingRequestBuilder.validBooking();
+            response = bookingClient.createBooking(request);
+            if (response.statusCode() == 201) break;
+            log.warn("Attempt {} failed 409, retrying...", attempt);
+        }
+        ResponseValidator.assertStatusCode(response, 201);
+        ScenarioContext.get().setLastCreatedBookingId(
+                response.jsonPath().getInt("bookingid"));
+        ScenarioContext.get().setLastCheckinDate(
+                request.getBookingdates().getCheckin());
+        ScenarioContext.get().setLastCheckoutDate(
+                request.getBookingdates().getCheckout());
     }
 
     @Then("the response status should be {int}")
@@ -56,19 +85,6 @@ public class BookingStepDefinitions {
                 "schemas/booking-response-schema.json");
     }
 
-    @Given("a valid booking exists")
-    public void aValidBookingExists() {
-        BookingRequest request = BookingRequestBuilder.validBooking();
-        Response response = bookingClient.createBooking(request);
-        ResponseValidator.assertStatusCode(response, 201);
-        int bookingId = response.jsonPath().getInt("bookingid");
-        ScenarioContext.get().setLastCreatedBookingId(bookingId);
-        ScenarioContext.get().setLastCheckinDate(
-                request.getBookingdates().getCheckin());
-        ScenarioContext.get().setLastCheckoutDate(
-                request.getBookingdates().getCheckout());
-    }
-
     @When("I retrieve the booking with a valid token")
     public void iRetrieveTheBookingWithValidToken() {
         int bookingId = ScenarioContext.get().getLastCreatedBookingId();
@@ -77,10 +93,11 @@ public class BookingStepDefinitions {
         ScenarioContext.get().setLastResponse(response);
     }
 
-    @Then("the response should contain field {string} with value {string}")
-    public void theResponseShouldContainFieldWithValue(String field, String value) {
-        ResponseValidator.assertBodyContains(
-                ScenarioContext.get().getLastResponse(), field, value);
+    @When("I retrieve the booking without a token")
+    public void iRetrieveTheBookingWithoutToken() {
+        int bookingId = ScenarioContext.get().getLastCreatedBookingId();
+        Response response = bookingClient.getBookingByIdWithoutAuth(bookingId);
+        ScenarioContext.get().setLastResponse(response);
     }
 
     @When("I update the booking with valid details")
@@ -102,11 +119,16 @@ public class BookingStepDefinitions {
         ScenarioContext.get().setLastResponse(response);
     }
 
-    @When("I retrieve the booking without a token")
-    public void iRetrieveTheBookingWithoutToken() {
+    @When("I delete the booking without a token")
+    public void iDeleteTheBookingWithoutToken() {
         int bookingId = ScenarioContext.get().getLastCreatedBookingId();
-        Response response = bookingClient.getBookingByIdWithoutAuth(bookingId);
+        Response response = bookingClient.deleteBookingWithoutAuth(bookingId);
         ScenarioContext.get().setLastResponse(response);
     }
 
+    @Then("the response should contain field {string} with value {string}")
+    public void theResponseShouldContainFieldWithValue(String field, String value) {
+        ResponseValidator.assertBodyContains(
+                ScenarioContext.get().getLastResponse(), field, value);
+    }
 }

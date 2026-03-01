@@ -38,3 +38,11 @@ Feature: Booking API
     Given a valid booking exists
     When I delete the booking with a valid token
     Then the response status should be 200
+
+  # ─── Security ────────────────────────────────────────────────────────────────
+
+  @security
+  Scenario: Retrieve a booking without authentication
+    Given a valid booking exists
+    When I retrieve the booking without a token
+    Then the response status should be 401

@@ -10,14 +10,33 @@ Automated API tests for the Restful Booker platform.
 - JUnit 5
 - Maven
 
+## Prerequisites
+
+- Java 17+
+- Maven 3.6+ **or** use the included Maven Wrapper (no Maven installation required)
+
 ## How to Run
+
+**Using Maven (if installed):**
 ```bash
 git clone https://github.com/Guruprakash-Mohan/api-restassured-automation.git
 cd api-restassured-automation
 mvn test
 ```
 
-## Run by tag
+**Using Maven Wrapper (no Maven installation needed):**
+```bash
+git clone https://github.com/Guruprakash-Mohan/api-restassured-automation.git
+cd api-restassured-automation
+
+# Windows
+mvnw.cmd test
+
+# Mac/Linux
+./mvnw test
+```
+
+## Run by Tag
 ```bash
 mvn test -Dcucumber.filter.tags="@smoke"
 mvn test -Dcucumber.filter.tags="@negative"
@@ -47,9 +66,12 @@ mvn test -Dcucumber.filter.tags="@security"
 ## Test Report
 
 After running, HTML report is available at:
+```
 target/cucumber-reports/cucumber.html
+```
 
 ## Notes
 
 - Tests run against https://automationintesting.online
 - Retry logic handles conflicts in the shared environment
+- Maven Wrapper downloads Maven 3.9.9 automatically if not installed

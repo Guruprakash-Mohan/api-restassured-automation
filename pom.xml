@@ -94,11 +94,19 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
+                    <useModulePath>false</useModulePath>
                     <includes>
-                        <include>**/runner/*.java</include>
+                        <include>**/TestRunner.java</include>
                     </includes>
+                    <properties>
+                        <property>
+                            <name>junit.platform.discovery.include.classname.pattern</name>
+                            <value>.*TestRunner</value>
+                        </property>
+                    </properties>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

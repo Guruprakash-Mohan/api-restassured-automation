@@ -50,4 +50,11 @@ public class BookingClient {
                 .get(ApiConstants.BOOKING_BY_ID);
     }
 
+    public Response deleteBookingWithoutAuth(int bookingId) {
+        log.info("DELETE /booking/{} without auth", bookingId);
+        return RequestSpecifications.baseSpec()
+                .pathParam("id", bookingId)
+                .delete(ApiConstants.BOOKING_BY_ID);
+    }
+
 }

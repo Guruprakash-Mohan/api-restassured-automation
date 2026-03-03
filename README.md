@@ -15,6 +15,16 @@ Automated API tests for the Restful Booker platform.
 - Java 17+
 - Maven 3.6+ **or** use the included Maven Wrapper (no Maven installation required)
 
+## CI (Continuous Integration)
+
+This project uses GitHub Actions for continuous integration.
+
+- Automatically runs on every push to `main`
+- Can be triggered manually from the Actions tab
+- Test report uploaded as artifact after each run
+
+[![API Test Automation](https://github.com/Guruprakash-Mohan/api-restassured-automation/actions/workflows/ci.yml/badge.svg)](https://github.com/Guruprakash-Mohan/api-restassured-automation/actions/workflows/ci.yml)
+
 ## How to Run
 
 **Using Maven (if installed):**

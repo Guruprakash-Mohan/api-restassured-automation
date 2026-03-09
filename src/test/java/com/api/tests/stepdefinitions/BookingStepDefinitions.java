@@ -11,6 +11,7 @@ import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Map;
 
 public class BookingStepDefinitions {
 
@@ -24,6 +25,23 @@ public class BookingStepDefinitions {
         Response response = null;
         for (int attempt = 1; attempt <= 10; attempt++) {
             BookingRequest request = BookingRequestBuilder.validBooking();
+            response = bookingClient.createBooking(request);
+            if (response.statusCode() == 201) {
+                ScenarioContext.get().setLastCreatedBookingId(
+                        response.jsonPath().getInt("bookingid"));
+                break;
+            }
+            log.warn("Attempt {} failed 409, retrying...", attempt);
+        }
+        ScenarioContext.get().setLastResponse(response);
+    }
+
+    @When("I create a booking with the following details:")
+    public void iCreateABookingWithFollowingDetails(io.cucumber.datatable.DataTable dataTable) {
+        Map<String, String> data = dataTable.asMap(String.class, String.class);
+        Response response = null;
+        for (int attempt = 1; attempt <= 10; attempt++) {
+            BookingRequest request = BookingRequestBuilder.validBookingFromTable(data);
             response = bookingClient.createBooking(request);
             if (response.statusCode() == 201) {
                 ScenarioContext.get().setLastCreatedBookingId(

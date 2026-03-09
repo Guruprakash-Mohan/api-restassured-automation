@@ -68,10 +68,17 @@ Feature: Booking API
     And the response should contain error message
 
   @create @negative
-  Scenario: Create a booking with an invalid email returns 400
-    When I create a booking with an invalid email "invalid.com"
+  Scenario Outline: Create a booking with an invalid email returns 400
+    When I create a booking with an invalid email "<email>"
     Then the response status should be 400
     And the response should contain error message
+
+    Examples:
+      | email       |
+      | invalid.com |
+      | @test.com   |
+      | plaintext   |
+      | john@       |
 
   @create @negative
   Scenario: Create a booking with a phone number that is too short returns 400
